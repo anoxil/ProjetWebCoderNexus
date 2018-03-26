@@ -1,0 +1,43 @@
+
+body {
+  background: repeating-linear-gradient(-45deg, white, white 2px, ThreeDHighlight 1px, ThreeDHighlight 3px);
+  min-height: 100%;
+}
+
+html {
+    font-size: 14px;
+    background-color:#f5f5f5bb;
+  }
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px;
+    }
+  }
+  
+  .container {
+    max-width: 960px;
+  }
+  
+  .pricing-header {
+    max-width: 700px;
+  }
+  
+  .card-deck .card {
+    min-width: 220px;
+  }
+
+  .mesTutos {
+    background-color: white;
+    border-style: outset;
+    margin-right: 12%;
+    margin-left: 12%;
+  }
+  
+  .lead{
+      text-align: center; 
+  }
+  
+  .border-top { border-top: 1px solid #e5e5e5; }
+  .border-bottom { border-bottom: 1px solid #e5e5e5; }
+  
+  .box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }

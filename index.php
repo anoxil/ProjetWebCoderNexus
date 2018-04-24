@@ -3,19 +3,13 @@
 <html>
 
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>CoderNexus - Page principale</title>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
-        <link rel="stylesheet" href="https://rawgit.com/wenzhixin/bootstrap-table/master/src/bootstrap-table.css">
-        <link rel="stylesheet" href="https://rawgit.com/wenzhixin/bootstrap-table/develop/src/extensions//filter-control/bootstrap-table-filter-control.css">
+        <?php require_once "includes/head.php" ?>
+        <!-- css de l'extension de whenzhixin https://github.com/wenzhixin/bootstrap-table -->
+        <link rel="stylesheet" href="css/dl/bootstrap-table.css">
+        <link rel="stylesheet" href="css/dl/bootstrap-table-filter-control.css">
+
         <link href="css/index.css" rel="stylesheet">
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-        <script src="https://rawgit.com/wenzhixin/bootstrap-table/develop/src/bootstrap-table.js"></script>
-        <script src="https://rawgit.com/wenzhixin/bootstrap-table/develop/src/extensions//filter-control/bootstrap-table-filter-control.js"></script>
-        <!--script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script-->
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     </head>
 
     <body>
@@ -26,6 +20,7 @@
         
         <main role="main">
 
+        <!-- carousel de présentation, 3 parties (class="carousel-item") -->
         <div id="myCarousel" class="carousel slide" data-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -49,35 +44,35 @@
                     <img class="second-slide" src="images/account.jpg" alt="Second slide">
                     <div class="container">
                         <div class="carousel-caption">
-                        <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-                            <h2 class="display-4">Créez votre compte</h2>
+                            <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+                                <h2 class="display-4">Créez votre compte</h2>
+                            </div>
+                            <p class="lead">Pour sauvegarder ou partager vos tutoriels préférés</p>
+                            <p><a class="btn btn-lg btn-outline-primary" href="signup.php" role="button">Inscription</a>
+                            <a class="btn btn-lg btn-outline-primary" href="login.php" role="button">Connexion</a></p>
                         </div>
-                        <p class="lead">Pour sauvegarder ou partager vos tutoriels préférés</p>
-                        <p><a class="btn btn-lg btn-outline-primary" href="signup.php" role="button">Inscription</a>
-                        <a class="btn btn-lg btn-outline-primary" href="login.php" role="button">Connexion</a></p>
                     </div>
                 </div>
-            </div>
-            <div class="carousel-item">
-                <img class="third-slide" src="images/synthgrid.jpg" alt="Third slide">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-                            <h2 class="display-4">Raphaël et Margot</h2>
+                <div class="carousel-item">
+                    <img class="third-slide" src="images/synthgrid.jpg" alt="Third slide">
+                    <div class="container">
+                        <div class="carousel-caption">
+                            <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+                                <h2 class="display-4">Raphaël et Margot</h2>
+                            </div>
+                            <p class="lead">Projet Web ENSC 2018</p>
                         </div>
-                        <p class="lead">Projet Web ENSC 2018</p>
                     </div>
                 </div>
+                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
             </div>
-            <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
 
         <br><br><br>
 
@@ -123,13 +118,15 @@
                 } else { echo "Aucun site n'est pour l'instant référencé ? Mais c'est une fabuleuse occasion d'en <a href='tutorial_add.php'>rajouter</a> si vous êtes administrateur !"; }
             ?>
 
-            <!-- Table de recherche avancée des tutoriels -->
+            <!-- Table de recherche avancée des tutoriels (bootstrap-table) -->
+
+            <!-- dans la table, on veut un système de page, 15 tutoriels par défaut, possibilité d'afficher par 30 tutos égalements, on tire les infos de tutoriels.json, on peut filtrer le tableau -->
             <table id="tutorialsTable" data-toggle="table" data-pagination="true" data-page-size="15" data-page-list="[15, 30]" data-url="tutoriels.json" data-filter-control="true" data-strict-search="true">
                 <thead>
                     <tr>
                         <!-- les data-field font référence aux clés du tableau json appelé, on définit les têtes et la bibliothèque gère l'affichage de chaque ligne -->
-                        <th data-field="ID" data-visible="false">ID</th> <!-- pour pouvoir créer les liens href uniquement -->
-                        <th data-field="INTITULE" data-sortable="true" data-formatter="intituleFormatter">Intitulé</th>
+                        <th data-field="ID" data-visible="false">ID</th> <!-- pour pouvoir créer les liens href uniquement, on récupère sa valeur dans intituleFormatter -->
+                        <th data-field="INTITULE" data-sortable="true" data-formatter="intituleFormatter">Intitulé</th> <!-- cf ligne 139 pour "intituleFormatter" -->
                         <th data-field="LANGAGE" data-filter-control="select" data-sortable="true">Langage</th>
                         <th data-field="TYPE" data-filter-control="select" data-sortable="true">Type</th>
                         <th data-field="NIVEAU" data-filter-control="select" data-sortable="true">Niveau</th>
@@ -138,21 +135,25 @@
                     </tr>
                 </thead>
             </table>
+
             <!-- Script pour rendre les intitulés cliquables vers la fiche du tuto -->
             <script>
+                // on modifie la colonne Intitulé en récupérant sa valeur et en l'utilisant pour créer un lien cliquable
                 function intituleFormatter(value, row) {
                     let link = "<a href='tutorial.php?id=" + row.ID + "'>" + value + "</a>";
                     return link;
                 }
             </script>
         </div>
-            
-        <?php require "includes/endjs.php"; ?>
-        
+                    
     </body>
 
     <footer class="container">
         <p class="float-right lead"><a href="#">Retour en haut</a></p>
+        <?php require_once "includes/footer.php"; ?>
+        <!-- js de l'extension de whenzhixin https://github.com/wenzhixin/bootstrap-table -->        
+        <script type="text/javascript" src="js/dl/bootstrap-table.js"></script>
+        <script type="text/javascript" src="js/dl/bootstrap-table-filter-control.js"></script>
     </footer>
 
 </html>

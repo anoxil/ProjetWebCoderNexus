@@ -2,9 +2,9 @@
 
 function InsererTuto($lien,$langage,$date,$niveau,$intitule,$screen)
 {
-    require ("includes/connect.php");
+    require_once "includes/functions.php";
    
-    $MaRequete=$BDD->prepare("INSERT INTO TUTORIELS(LIEN, LANGAGE, DATE, NIVEAU, INTITULE)
+    $MaRequete= getDb()->prepare("INSERT INTO TUTORIELS(LIEN, LANGAGE, DATE, NIVEAU, INTITULE)
     VALUES(:LIEN, :LANGAGE, :DATE, :NIVEAU, :INTITULE)"); 
 
     $MaRequete->bindValue('LIEN', $lien, PDO::PARAM_STR); 
@@ -15,10 +15,12 @@ function InsererTuto($lien,$langage,$date,$niveau,$intitule,$screen)
 
     $MaRequete->execute();
 
+    //si on veut ajouter un screenshot de la page principale du tutoriel
     if(!empty($screen)){
-        //call Google PageSpeed Insights API
+        //appeler Google PageSpeed Insights API
         $url = "https://www.googleapis.com/pagespeedonline/v2/runPagespeed?url=$lien&screenshot=true";
 
+        //sécurité ssl pour accèder au lien, on utilise le certificat cacert.pem
         $arrContextOptions=array(
             "ssl"=>array(
                 "cafile" => "includes/cacert.pem",
@@ -32,19 +34,20 @@ function InsererTuto($lien,$langage,$date,$niveau,$intitule,$screen)
         //decode json data
         $googlePagespeedData = json_decode($googlePagespeedData, true);
 
-        //screenshot data
+        //récupération des données du screenshot de l'api
         $img = $googlePagespeedData['screenshot']['data'];
         
+        //traduction des données en base64
         $img = str_replace('data:image/jpeg;base64,', '', $img);
         $img = str_replace(array('_','-'),array('/','+'), $img);
         $fileData = base64_decode($img);
-        //saving
 
-        $MaRequete=$BDD->prepare("SELECT ID FROM TUTORIELS WHERE INTITULE = :INTITULE");
+        $MaRequete= getDb() ->prepare("SELECT ID FROM TUTORIELS WHERE INTITULE = :INTITULE");
         $MaRequete->bindValue('INTITULE', $intitule, PDO::PARAM_STR);
         $MaRequete->execute();
         $resultats = $MaRequete->fetch();
 
+        //on sauvegarde l'image dans le dossier images/tutoriels/
         $fileName = 'images/tutoriels/'.$resultats["ID"].'.jpeg';
         file_put_contents($fileName, $fileData);
     }

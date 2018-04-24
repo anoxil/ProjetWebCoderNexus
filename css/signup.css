@@ -1,8 +1,7 @@
 body {
-    padding-top: 40px;
-    padding-bottom: 40px;
-    background-color: rgb(167, 167, 167);
-  }
+  background: repeating-linear-gradient(-45deg, white, white 2px, ThreeDHighlight 1px, ThreeDHighlight 3px);
+  min-height: 100%;
+}
   
   .form-signin {
     max-width: 330px;

@@ -1,8 +1,8 @@
 //souris sur les éléments
 $(".voting_stars").mouseover(function() {
 	let $this = $(this);
-
-	$this.prevAll().addBack().attr("src","images/stars/star_highlight.png") //changer d'image pour toutes les étoiles jusqu'à celle actuellement survolée
+	//changer d'image pour toutes les étoiles jusqu'à celle actuellement survolée
+	$this.prevAll().addBack().attr("src","images/stars/star_highlight.png")
 });
 
 
@@ -10,10 +10,10 @@ $(".voting_stars").mouseover(function() {
 star_number = $(".voting_stars").click(function() {
 	let $this = $(this);
 	//on enregistre le numéro de l'étoile clickée (pour enregistrer le vote)
-	let id = $this.attr("id")
-	star_number = id.substr(id.length - 1);
+	let id = $this.attr("id") // id="voteX"
+	star_number = id.substr(id.length - 1); // --> on récupère X
 
-	$("#hiddenvote").attr("value", star_number);//on écrit le numéro dans le form de vote
+	$("#hiddenvote").attr("value", star_number); //on écrit le numéro dans le form de vote
 
 	$this.prevAll().addBack().attr("src","images/stars/star_full.png")
 	$this.nextAll().attr("src", "images/stars/star_empty.png");

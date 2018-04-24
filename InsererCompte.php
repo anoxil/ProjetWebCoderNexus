@@ -2,9 +2,10 @@
 
 function InsererCompte($loginUser,$nom,$prenom,$mail,$mdp)
 {
-    require ("includes/connect.php");
+    require_once "includes/connect.php";
+    require_once "includes/functions.php";
    
-    $MaRequete=$BDD->prepare("INSERT INTO COMPTES(LOGIN_USER, NOM, PRENOM, MAIL, MDP)
+    $MaRequete = getDb() -> prepare("INSERT INTO COMPTES(LOGIN_USER, NOM, PRENOM, MAIL, MDP)
     VALUES(:LOGIN_USER, :NOM, :PRENOM, :MAIL, :MDP)"); 
 
     $MaRequete->bindValue('LOGIN_USER', $loginUser, PDO::PARAM_STR); 

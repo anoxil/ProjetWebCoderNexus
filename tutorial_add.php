@@ -4,8 +4,8 @@
 
 
     <head>
+        <title>CoderNexus - Ajout d'un tutoriel</title>    
         <?php require_once "includes/head.php"; ?>
-        <title>CoderNexus - Ajout d'un tutoriel</title>        
         <link href="css/add.css" rel="stylesheet">
     </head>
 
@@ -13,11 +13,12 @@
     <body>
 
         <?php
+            //accessible uniquement aux admins
             if (isset($_SESSION["loginUser"]) && ($_SESSION["admin"] == 1)) {
         
-                require ("InsererTuto.php");
-                require ("includes/connect.php");
-                require ("includes/navbar.php");
+                require_once ("InsererTuto.php");
+                require_once ("includes/connect.php");
+                require_once ("includes/navbar.php");
 
                 if (!empty($_POST['lien']) && !empty($_POST['langage']) && !empty($_POST['niveau']) && !empty($_POST['intitule'])) 
                 {
@@ -41,6 +42,7 @@
 
                                     <p class="lead">Sélectionnez le langage sur lequel porte le tutoriel</p> 
                                     <select name="langage" class="form-control" required>
+                                    <!-- liste des langages disponibles -->
                                     <option disabled selected>Langage</option>
                                     <?php
                                         $requete = "SELECT LANGAGE FROM LANGAGES";
@@ -78,14 +80,14 @@
                         </div>
                     </div>
 
-                <?php }
+                <?php
+                }
             } else {
                 echo "Vous n'êtes pas admin, accès non autorisé.";
-            }
-                    require "includes/endjs.php";
-                ?>
+            } ?>
 
     </body>
 
+    <?php require_once "includes/footer.php"; ?>
 
 </html>

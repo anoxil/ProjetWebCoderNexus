@@ -3,22 +3,21 @@
 <html>
 
     <head>
-
-        <?php require "includes/head.php";?>
-        <title>CoderNexus - Modification du profil</title>        
+        <title>CoderNexus - Modification du profil</title>
+        <?php require_once "includes/head.php";?>
         <link href="css/add.css" rel="stylesheet">
-    
     </head>
 
     <body>
 
         <?php
-            require ("includes/connect.php");
-            require ("includes/navbar.php");
+            require_once ("includes/connect.php");
+            require_once ("includes/functions.php");
+            require_once ("includes/navbar.php");
 
             $loginUser = $_SESSION["loginUser"];
-            $MaRequete="SELECT * FROM COMPTES WHERE LOGIN_USER='$loginUser' ";
-            $MonRs=$BDD->query($MaRequete);
+            $MonRs = getDb() -> prepare("SELECT * FROM COMPTES WHERE LOGIN_USER=?");
+            $MonRs -> execute(array($loginUser));
             if($Tuple=$MonRs->fetch()) { 
                 $_SESSION['id'] = $Tuple["ID"];
             }
@@ -36,8 +35,7 @@
             
                 if($Tuple=$MonRs->fetch())
                 { 
-                    if ($Tuple["LOGIN_USER"]==$_POST['loginUser']) 
-                    {
+                    if ($Tuple["LOGIN_USER"]==$_POST['loginUser']) {
                         $error_message = true;
                     } 
                     else {
@@ -48,8 +46,6 @@
                         $MaRequete->bindValue('LOGIN_USER',$loginUser,PDO::PARAM_STR );
                         $MaRequete->bindValue('ID',$id,PDO::PARAM_INT );
                         $MaRequete->execute();
-                        
-                        header('Location: profile.php');
                     }
                 }
             }
@@ -65,23 +61,12 @@
 
             if (!empty($_POST['nom']))
             {
-
-                //$MaRequete=$BDD->prepare("UPDATE COMPTES SET nom=? WHERE loginUser= ?");
-                //$MaRequete->exec(array($_POST['nom'], $_SESSION['loginUser']));
-
                 $MaRequete = $BDD->prepare("UPDATE COMPTES SET NOM = :NOM WHERE LOGIN_USER = :loginUser");
                 $nom = $_POST['nom'];
                 $loginUser = $_SESSION['loginUser'];
                 $MaRequete->bindValue('NOM',$nom , PDO::PARAM_STR );
                 $MaRequete->bindValue('LOGIN_USER',$loginUser,PDO::PARAM_STR );
                 $MaRequete->execute();
-                header('Location: profile.php');
-
-                /*$nomForm = $_POST['nom'];
-                $loginUserForm = $_SESSION['loginUser'];
-                $MaRequete = $bdd->exec("UPDATE COMPTES
-                SET nom = '$nomForm'
-                WHERE loginUser = '$loginUserForm'");*/
             }
 
             if (!empty($_POST['prenom']))
@@ -92,7 +77,6 @@
                 $MaRequete->bindValue('PRENOM',$prenom , PDO::PARAM_STR );
                 $MaRequete->bindValue('LOGIN_USER',$loginUser,PDO::PARAM_STR );
                 $MaRequete->execute();
-                header('Location: profile.php');
             }
 
             if (!empty($_POST['mdp']))
@@ -104,7 +88,6 @@
                 $MaRequete->bindValue('MDP',$mdp , PDO::PARAM_STR );
                 $MaRequete->bindValue('LOGIN_USER',$loginUser,PDO::PARAM_STR );
                 $MaRequete->execute();
-                header('Location: profile.php');
             }
 
             if (!empty($_POST['mail'])) 
@@ -115,42 +98,40 @@
                 $loginUser = $_SESSION['loginUser'];
                 $MaRequete->bindValue('MAIL', $mail, PDO::PARAM_STR );
                 $MaRequete->bindValue('LOGIN_USER', $loginUser, PDO::PARAM_STR );
-
                 $MaRequete->execute();
-                header('Location: profile.php');
             }
         ?>
 
-            <br/><br/><br/>
-            
-            <div class="container">
-                <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto">
-                    <h2 class="display-4">Modifier les données de profil</h2>
+        <br/><br/><br/>
+        
+        <div class="container">
+            <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto">
+                <h2 class="display-4">Modifier les données de profil</h2>
 
-                    <form class="form-signin" enctype="multipart/form-data" style="width:600px" action="modifierCompte.php" method="POST">
-                        <label for="image">Photo de profil :</label>
-                        <input type="file" class="form-control" id="image" name="image"></br>
-                        <input type="text" class="form-control" name="nom" placeholder="Nouveau nom ?" autofocus><br/>
-                        <input type="text" class="form-control" name="prenom" placeholder="Nouveau prénom ?"><br/>
-                        <?php
-                            if ($error_message) {
-                                echo "<div class='container' style='color: red'>";
-                                echo "Ce loginUser est déjà utilisé. Choisissez-en un autre !";
-                                echo "</div>";
-                            }
-                        ?>
-                        <input type="text" class="form-control" name="loginUser" placeholder="Nouveau login ?" ><br/>
-                        <input type="text" class="form-control" name="mail" placeholder="Nouveau mail ?"><br/>
-                        <input type="password" class="form-control" name="mdp" placeholder="Nouveau mot de passe ?"><br/>
-                        <center>
-                            <button class="btn btn-lg btn-outline-primary btn-block" style="width:150px" type="submit">Envoyer</button>
-                        </center>
-                    </form>
-                </div>
+                <form class="form-signin" enctype="multipart/form-data" style="width:600px" action="modifierCompte.php" method="POST">
+                    <label for="image">Photo de profil :</label>
+                    <input type="file" class="form-control" id="image" name="image"></br>
+                    <input type="text" class="form-control" name="nom" placeholder="Nouveau nom ?" autofocus><br/>
+                    <input type="text" class="form-control" name="prenom" placeholder="Nouveau prénom ?"><br/>
+                    <?php
+                        if ($error_message) {
+                            echo "<div class='container' style='color: red'>";
+                            echo "Ce loginUser est déjà utilisé. Choisissez-en un autre !";
+                            echo "</div>";
+                        }
+                    ?>
+                    <input type="text" class="form-control" name="loginUser" placeholder="Nouveau login ?" ><br/>
+                    <input type="text" class="form-control" name="mail" placeholder="Nouveau mail ?"><br/>
+                    <input type="password" class="form-control" name="mdp" placeholder="Nouveau mot de passe ?"><br/>
+                    <center>
+                        <button class="btn btn-lg btn-outline-primary btn-block" style="width:150px" type="submit">Envoyer</button>
+                    </center>
+                </form>
             </div>
-
-        <?php require "includes/endjs.php"; ?>
+        </div>
 
     </body>
+
+    <?php require_once "includes/footer.php"; ?>    
 
 </html>

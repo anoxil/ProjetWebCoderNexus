@@ -1,38 +1,31 @@
 <html>
 
     <head>
+        <title>CoderNexus - Inscription</title>
         <?php require_once "includes/head.php"; ?>
-        <meta charset="utf-8">
-        <title>CoderNexus - Inscription</title>        
-        <?php require ("includes/connect.php");?>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <meta name="description" content="">
-        <meta name="author" content="">
-        <link rel="icon" href="images/profile.png">
-
-        <!-- Bootstrap core CSS -->
-        <link href="../../../../dist/css/bootstrap.min.css" rel="stylesheet">
-
-        <!-- Custom styles for this template -->
         <link href="css/signup_login.css" rel="stylesheet">
+        <link rel="icon" href="images/profile.png">      
     </head>
 
     <body>
 
         <?php
-            require ("InsererCompte.php");
-            require ("includes/connect.php");
-            require ("includes/navbar.php");
+            require_once ("InsererCompte.php");
+            require_once ("includes/connect.php");
+            require_once ("includes/functions.php");
+            require_once ("includes/navbar.php");
 
             $login_message = false;
             $mdp_message = false;
             $mail_message = false;
 
             if (!empty($_POST['loginUser']) && !empty($_POST['nom']) && !empty($_POST['prenom']) && !empty($_POST['mdp']) && !empty($_POST['mail'])) {
-                $MaRequete="SELECT * FROM COMPTES";
-                $MonRs=$BDD->query($MaRequete);
-            
-                while($Tuple=$MonRs->fetch()) { 
+                $MaRequete = getDb() -> prepare("SELECT * FROM COMPTES");
+                $MaRequete -> execute();
+                
+
+                //on vérifie bien que les données envoyées sont correctes pour un ajout de compte
+                while($Tuple=$MaRequete->fetch()) {
                     if ($Tuple["LOGIN_USER"]==$_POST['loginUser']) {
                         $login_message = true;
                     }
@@ -43,13 +36,14 @@
                 if($_POST["mdp"] != $_POST["mdp_check"]) {
                     $mdp_message = true;
                 }
-                if (!$login_message && !$mdp_message) {
+                //si les données sont correctes, on ajoute le compte et on le connecte
+                if (!$login_message && !$mail_message && !$mdp_message) {
                     InsererCompte($_POST['loginUser'], $_POST['nom'], $_POST['prenom'], $_POST['mail'], $_POST['mdp']);
                     session_start();
                     $_SESSION["loginUser"] = $_POST['loginUser'];
                     $_SESSION["mdp"] = $_POST['mdp'];
-                    $MaRequete="SELECT * FROM COMPTES WHERE LOGIN_USER='".$_POST['loginUser']."'";
-                    $MonRs=$BDD->query($MaRequete);
+                    $MonRs = getDb() -> prepare("SELECT * FROM COMPTES WHERE LOGIN_USER=?");
+                    $MonRs -> execute(array($_POST["loginUser"]));
                     if($Tuple=$MonRs->fetch()) { 
                         $_SESSION['id'] = $Tuple["ID"];
                         $_SESSION['admin'] = $Tuple["ADMIN"];
@@ -61,14 +55,15 @@
 
         <div class="text-center">
             <center>
+                <!-- si l'utilisateur a déjà envoyé des données mais qu'il y a eu erreur, on pré-rempli le form avec les données de l'envoi précédent (cf les isset()) -->
                 <form class="form-signin" style="width:400px" action="signup.php" method="POST">
-                    <img class="mb-4" src="https://cdn2.iconfinder.com/data/icons/rcons-user/32/male-shadow-fill-circle-512.png" alt="" width="72" height="72">
+                    <img class="mb-4" src="images/login_shadow.png" width="72" height="72">
                     <div class="spricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
                         <h2 class="display-4">Inscription</h2>
                     </div>
-                    <input type="text" class="form-control" name="nom" placeholder="Entrez votre nom" required autofocus>
-                    <input type="text" class="form-control" name="prenom" placeholder="Entrez votre prénom" required> -
-                    <input type="text" class="form-control" name="loginUser" placeholder="Entrez votre login" required>
+                    <input type="text" class="form-control" name="nom" placeholder="Entrez votre nom" <?php if(isset($_POST['nom'])) { echo "value='".$_POST['nom']."'"; } ?> required autofocus>
+                    <input type="text" class="form-control" name="prenom" placeholder="Entrez votre prénom" <?php if(isset($_POST['prenom'])) { echo "value='".$_POST['prenom']."'"; } ?> required> -
+                    <input type="text" class="form-control" name="loginUser" placeholder="Entrez votre login" <?php if(isset($_POST['loginUser'])) { echo "value='".$_POST['loginUser']."'"; } ?> required>
                     <?php
                         if ($login_message) {
                             echo "<div class='container' style='color: red'>";
@@ -76,7 +71,7 @@
                             echo "</div>";
                         }
                     ?>
-                    <input type="email" class="form-control" name="mail" placeholder="Entrez votre mail" required>
+                    <input type="email" class="form-control" name="mail" placeholder="Entrez votre mail" <?php if(isset($_POST['mail'])) { echo "value='".$_POST['mail']."'"; } ?> required>
                     <?php
                         if ($mail_message) {
                             echo "<div class='container' style='color: red'>";
@@ -97,9 +92,9 @@
                 </form>
             </center>
         </div>
-        
-        <?php require "includes/endjs.php"; ?>
 
     </body>
+
+    <?php require_once "includes/footer.php"; ?>    
 
 </html>
